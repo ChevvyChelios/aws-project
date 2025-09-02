@@ -1,0 +1,25 @@
+{
+  "name": "student-management-system",
+  "version": "1.0.0",
+  "description": "Full-stack Student Management System with React frontend and Express.js backend",
+  "scripts": {
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "react",
+    "express",
+    "mysql",
+    "student-management",
+    "fullstack"
+  ],
+  "author": "",
+  "license": "MIT"
+}
