@@ -2,14 +2,52 @@ const express = require('express');
 const router = express.Router();
 const { pool } = require('../database');
 
+// Helper function to format dates for API response
+const formatStudentData = (student) => {
+  // Helper function to format a date to YYYY-MM-DD without timezone issues
+  const formatDateOnly = (date) => {
+    if (!date) return null;
+    
+    console.log('Formatting date:', date, 'Type:', typeof date, 'Is Date:', date instanceof Date);
+    
+    // If it's already a string in YYYY-MM-DD format, return as is
+    if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      console.log('Date already in correct string format:', date);
+      return date;
+    }
+    
+    // If it's a Date object, format it properly
+    if (date instanceof Date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const formatted = `${year}-${month}-${day}`;
+      console.log('Formatted Date object:', formatted);
+      return formatted;
+    }
+    
+    console.log('Unknown date format:', date);
+    return null;
+  };
+
+  return {
+    ...student,
+    date_of_birth: formatDateOnly(student.date_of_birth),
+    enrollment_date: formatDateOnly(student.enrollment_date),
+    created_at: student.created_at ? student.created_at.toISOString() : null,
+    updated_at: student.updated_at ? student.updated_at.toISOString() : null
+  };
+};
+
 // GET /api/students - Get all students
 router.get('/', async (req, res) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM students ORDER BY created_at DESC');
+    const formattedStudents = rows.map(formatStudentData);
     res.json({
       success: true,
-      data: rows,
-      count: rows.length
+      data: formattedStudents,
+      count: formattedStudents.length
     });
   } catch (error) {
     console.error('Error fetching students:', error);
@@ -28,10 +66,11 @@ router.get('/search', async (req, res) => {
     
     if (!q || q.trim() === '') {
       const [rows] = await pool.execute('SELECT * FROM students ORDER BY created_at DESC');
+      const formattedStudents = rows.map(formatStudentData);
       return res.json({
         success: true,
-        data: rows,
-        count: rows.length
+        data: formattedStudents,
+        count: formattedStudents.length
       });
     }
 
@@ -43,10 +82,11 @@ router.get('/search', async (req, res) => {
       [searchTerm, searchTerm, searchTerm]
     );
 
+    const formattedStudents = rows.map(formatStudentData);
     res.json({
       success: true,
-      data: rows,
-      count: rows.length
+      data: formattedStudents,
+      count: formattedStudents.length
     });
   } catch (error) {
     console.error('Error searching students:', error);
@@ -71,9 +111,10 @@ router.get('/:id', async (req, res) => {
       });
     }
 
+    const formattedStudent = formatStudentData(rows[0]);
     res.json({
       success: true,
-      data: rows[0]
+      data: formattedStudent
     });
   } catch (error) {
     console.error('Error fetching student:', error);
@@ -135,10 +176,11 @@ router.post('/', async (req, res) => {
     // Fetch the created student
     const [newStudent] = await pool.execute('SELECT * FROM students WHERE id = ?', [result.insertId]);
 
+    const formattedStudent = formatStudentData(newStudent[0]);
     res.status(201).json({
       success: true,
       message: 'Student created successfully',
-      data: newStudent[0]
+      data: formattedStudent
     });
   } catch (error) {
     console.error('Error creating student:', error);
@@ -221,10 +263,11 @@ router.put('/:id', async (req, res) => {
     // Fetch the updated student
     const [updatedStudent] = await pool.execute('SELECT * FROM students WHERE id = ?', [id]);
 
+    const formattedStudent = formatStudentData(updatedStudent[0]);
     res.json({
       success: true,
       message: 'Student updated successfully',
-      data: updatedStudent[0]
+      data: formattedStudent
     });
   } catch (error) {
     console.error('Error updating student:', error);

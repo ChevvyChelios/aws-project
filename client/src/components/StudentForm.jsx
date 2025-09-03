@@ -15,6 +15,55 @@ const StudentForm = ({ student, onSubmit, onCancel, title }) => {
   });
   const [errors, setErrors] = useState({});
 
+  // Helper function to format date for HTML date input
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    
+    console.log('Formatting date for input:', dateString, 'Type:', typeof dateString);
+    
+    // If it's already in YYYY-MM-DD format, return as is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      console.log('Date already in correct format:', dateString);
+      return dateString;
+    }
+    
+    // If it's an ISO string, extract just the date part
+    if (typeof dateString === 'string' && dateString.includes('T')) {
+      const datePart = dateString.split('T')[0];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+        console.log('Extracted date part from ISO:', datePart);
+        return datePart;
+      }
+    }
+    
+    // For other formats, try to parse the date
+    // Use a more robust approach to avoid timezone issues
+    let date;
+    
+    // If it's a date string in YYYY-MM-DD format, parse it as local date
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      const [year, month, day] = dateString.split('-').map(Number);
+      date = new Date(year, month - 1, day); // month is 0-indexed
+    } else {
+      // For other formats, try standard Date constructor
+      date = new Date(dateString);
+    }
+    
+    if (isNaN(date.getTime())) {
+      console.log('Invalid date:', dateString);
+      return '';
+    }
+    
+    // Format using local date methods
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log('Formatted date (local):', formattedDate);
+    return formattedDate;
+  };
+
   useEffect(() => {
     if (student) {
       console.log('StudentForm received student data:', student);
@@ -28,8 +77,8 @@ const StudentForm = ({ student, onSubmit, onCancel, title }) => {
         year: student.year || '',
         gpa: student.gpa || '',
         address: student.address || '',
-        dateOfBirth: student.date_of_birth || student.dateOfBirth || '',
-        enrollmentDate: student.enrollment_date || student.enrollmentDate || ''
+        dateOfBirth: formatDateForInput(student.date_of_birth || student.dateOfBirth),
+        enrollmentDate: formatDateForInput(student.enrollment_date || student.enrollmentDate)
       });
     }
   }, [student]);
