@@ -8,16 +8,29 @@ A full-stack web application for managing student records with a React frontend 
 student-management-system/
 ├── client/                 # React frontend
 │   ├── src/
-│   │   ├── components/     # React components
+│   │   ├── components/     # React components (.jsx files)
+│   │   │   ├── Header.jsx
+│   │   │   ├── Stats.jsx
+│   │   │   ├── StudentList.jsx
+│   │   │   ├── StudentForm.jsx
+│   │   │   └── StudentDetail.jsx
 │   │   ├── services/       # API service layer
-│   │   └── ...
-│   └── package.json
+│   │   │   └── api.js
+│   │   ├── App.jsx         # Main app component
+│   │   ├── index.js        # React entry point
+│   │   └── index.css       # Global styles
+│   ├── public/            # Static files
+│   ├── env.example        # Environment variables template
+│   └── package.json       # Frontend dependencies
 ├── server/                 # Express.js backend
 │   ├── routes/            # API routes
+│   │   └── students.js
 │   ├── database.js        # MySQL connection
 │   ├── server.js          # Express server
-│   └── package.json
-└── package.json           # Root package.json
+│   ├── setup-database.sql # Database schema
+│   ├── config.env         # Environment variables
+│   └── package.json       # Backend dependencies
+└── package.json           # Root package.json with scripts
 ```
 
 ## ✨ Features
@@ -175,8 +188,9 @@ Use the search bar to filter by:
 ## 🛠️ Technologies Used
 
 ### Frontend
-- **React 18** - UI library
+- **React 18** - UI library with JSX components
 - **JavaScript (ES6+)** - Programming language
+- **JSX** - Component files with .jsx extension for better IDE support
 - **CSS3** - Styling with modern features
 - **Fetch API** - HTTP requests
 

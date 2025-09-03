@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const StudentForm = ({ student, onSubmit, onCancel, title }) => {
   const [formData, setFormData] = useState({
+    id: null, // Include ID field for updates
     name: '',
     email: '',
     phone: '',
@@ -16,7 +17,10 @@ const StudentForm = ({ student, onSubmit, onCancel, title }) => {
 
   useEffect(() => {
     if (student) {
+      console.log('StudentForm received student data:', student);
+      console.log('Student ID in form:', student.id);
       setFormData({
+        id: student.id, // Include the ID for updates
         name: student.name || '',
         email: student.email || '',
         phone: student.phone || '',
@@ -96,6 +100,8 @@ const StudentForm = ({ student, onSubmit, onCancel, title }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
+      console.log('Form submitting with data:', formData);
+      console.log('Form data ID:', formData.id);
       onSubmit(formData);
     }
   };

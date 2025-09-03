@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import StudentList from './components/StudentList';
-import StudentForm from './components/StudentForm';
-import StudentDetail from './components/StudentDetail';
-import Header from './components/Header';
-import Stats from './components/Stats';
-import apiService from './services/api';
+import StudentList from './components/StudentList.jsx';
+import StudentForm from './components/StudentForm.jsx';
+import StudentDetail from './components/StudentDetail.jsx';
+import Header from './components/Header.jsx';
+import Stats from './components/Stats.jsx';
+import apiService from './services/api.js';
 
 function App() {
   const [students, setStudents] = useState([]);
@@ -77,6 +77,15 @@ function App() {
     try {
       setLoading(true);
       setError(null);
+      
+      // Debug: Log the student data being sent
+      console.log('Updating student with data:', updatedStudent);
+      console.log('Student ID:', updatedStudent.id);
+      
+      if (!updatedStudent.id) {
+        throw new Error('Student ID is missing. Cannot update student.');
+      }
+      
       const response = await apiService.updateStudent(updatedStudent.id, updatedStudent);
       setStudents(students.map(student =>
         student.id === updatedStudent.id ? response.data : student
@@ -117,6 +126,8 @@ function App() {
   };
 
   const handleEditStudent = (student) => {
+    console.log('Editing student:', student);
+    console.log('Student ID:', student?.id);
     setSelectedStudent(student);
     setCurrentView('edit');
   };

@@ -49,7 +49,7 @@ const StudentDetail = ({ student, onEdit, onDelete, onBack }) => {
             <button className="btn btn-secondary" onClick={onBack}>
               ← Back to List
             </button>
-            <button className="btn btn-warning" onClick={onEdit}>
+            <button className="btn btn-warning" onClick={() => onEdit(student)}>
               ✏️ Edit Student
             </button>
             <button className="btn btn-danger" onClick={onDelete}>
